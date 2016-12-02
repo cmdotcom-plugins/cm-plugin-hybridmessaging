@@ -5,7 +5,7 @@
         version="0.0.1">
 
     <name>HybridMessaging</name>
-    <description>The Heybrid Messaging SDK for use in Cordova applications</description>
+    <description>The Hybrid Messaging SDK for use in Cordova applications</description>
     <author>CM</author>
     <license>Copyright 2014-2016, CM</license>
     <keywords>push,voice,sms,hybrid messaging</keywords>

@@ -2,7 +2,7 @@
 //  HybridMessagingPlugin.h
 //  
 //
-//  Created by Yulia Myhailova on 22/11/2016.
+//  Copyright (c) CM Telecom 2016. All rights reserved.
 //
 //
 

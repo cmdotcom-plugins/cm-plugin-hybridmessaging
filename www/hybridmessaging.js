@@ -1,5 +1,7 @@
 /**
- * Created by ymyhailova on 21/11/2016.
+ *
+ * Copyright (c) CM Telecom 2016. All rights reserved.
+ *
  */
 
 var argscheck = require("cordova/argscheck"),
