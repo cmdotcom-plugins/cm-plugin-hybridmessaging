@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        id="cm-plugin-hybridmessaging"
+        version="0.0.1">
+
+    <name>HybridMessaging</name>
+    <description>The Heybrid Messaging SDK for use in Cordova applications</description>
+    <author>CM</author>
+    <license>Copyright 2014-2016, CM</license>
+    <keywords>push,voice,sms,hybrid messaging</keywords>
+
+    <js-module src="www/hybridmessaging.js" name="hybridmessaging">
+        <clobbers target="hybridmessaging" />
+    </js-module>
+
+    <!-- ios -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="HybridMessaging">
+                <param name="ios-package" value="HybridMessagingPlugin"/>
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/HybridMessaging.h" />
+        <source-file src="src/ios/libHybridMessaging.a" framework="true" />
+
+        <header-file src="src/ios/HybridMessagingPlugin.h" />
+        <source-file src="src/ios/HybridMessagingPlugin.m" />
+
+    </platform>
+
+</plugin>
