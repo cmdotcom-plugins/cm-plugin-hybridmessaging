@@ -48,7 +48,7 @@ var hybridmessaging = {
     },
 
     /**
-     * Sets development mode for iOS, which will use Development Sanbox for push messages then.
+     * Sets development mode for iOS, which will use Development Sandbox for push messages then.
      * @param {boolean} enableDevelopment (required)
      */
     setDevelopment: function(enableDevelopment) {
@@ -150,7 +150,7 @@ var hybridmessaging = {
 
     /**
      * Requests current verification status
-     * @param successCallback (optional) - callback function to be called on verification result
+     * @param {function} successCallback (optional) - callback function to be called on verification result
      */
     getVerificationStatus: function(successCallback) {
         var methodName = 'getVerificationStatus';
@@ -161,10 +161,10 @@ var hybridmessaging = {
 
     /**
      * Returns messages that have been sent by Hybrid Messaging
-     * @param limit (optional) - amount of messages to retrieve
-     * @param offset (optional) - offset from which messages to retrieve
-     * @param successCallback (optional) - callback to be called on successful message retrieval
-     * @param errorCallback (optional) - callback to be called on message retrieval error
+     * @param {number} limit (optional) - amount of messages to retrieve
+     * @param {number} offset (optional) - offset from which messages to retrieve
+     * @param {function} successCallback (optional) - callback to be called on successful message retrieval
+     * @param {function} errorCallback (optional) - callback to be called on message retrieval error
      */
     getMessages: function(limit, offset, successCallback, errorCallback) {
         var methodName = 'getMessages';
