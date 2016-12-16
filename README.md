@@ -35,37 +35,45 @@ Latest version is **0.0.1**
 * [hybridmessaging.DeviceRegistrationStatus](#DeviceRegistrationStatus)
 
 
-## <a name="getDeviceIdValue"></a>getDeviceIdValue(successCallback)
+## <a name="getDeviceIdValue"></a>getDeviceIdValue(successCallback, errorCallback)
 
 Returns a device ID value
 
 ### Parameters
 
-* successCallback: `function`, (optional) - callback function to be called with a result
+* successCallback: `function`, (required) - callback function to be called upon successfully fetching device ID
+
+* errorCallback: `function`, (optional) - callback function to be called upon error
 
 ### Example
 
 ```javascript
 window.hybridmessaging.getDeviceIdValue(function(deviceId) {
     console.log('Device id is ' + deviceId);
+}, function(error) {
+    console.log('Failed to fetch device id: ' + error);
 });
 ```
 
 
 
-## <a name="getMsisdnValue"></a>getMsisdnValue(successCallback) 
+## <a name="getMsisdnValue"></a>getMsisdnValue(successCallback, errorCallback) 
 
 Returns a msisdn value
 
 ### Parameters
 
-* successCallback: `function`, (optional) - callback function to be called with a result
+* successCallback: `function`, (required) - callback function to be called upon successfully fetching MSISDN
+
+* errorCallback: `function`, (optional) - callback function to be called upon error
 
 ### Example
 
 ```javascript
 window.hybridmessaging.getMsisdnValue(function(msisdn) {
     console.log('MSISDN is ' + msisdn);
+}, function(error) {
+     console.log('Failed to fetch MSISDN: ' + error);
 });
 ```
 
@@ -80,21 +88,24 @@ Sets development mode for iOS, which will use Development Sandbox for push messa
 
 ### Example
 
-    window.hybridmessaging.enableDevelopment(true);
+```javascript
+window.hybridmessaging.enableDevelopment(true);
+```
 
 
-## <a name="configureService"></a>configureService(options) 
+## <a name="configureService"></a>configureService(config) 
 
 Configures service with key, secret and callbacks
 
 ### Parameters
 
-* options: `Object`, (required) - config object with format:
+* config: `Object`, (required) - config object with format:
 
 ```javascript
 {
     appKey : 'string',
-    appSecret : 'string', 
+    appSecret : 'string',
+    senderId : 'string', (Android only)
     notificationCallback : 'function', 
     deviceCarrierUpdateCallback : 'function'
 }
@@ -121,28 +132,28 @@ var options = {
 window.hybridmessaging.configureService(options);
 ```
 
-## <a name="startMessagingService"></a>startMessagingService(successCallback, failureCallback) 
+## <a name="startMessagingService"></a>startMessagingService(successCallback, errorCallback) 
 
-Sets callbacks for push registration and enables messaging service
+Enables messaging service
 
 ### Parameters
 
-* successCallback: `function`, (optional) - success push registration callback
+* successCallback: `function`, (required) - callback function to be called upon successfully started messaging service
 
-* failureCallback: `function`, (optional) - error push registration callback
+* failureCallback: `function`, (optional) - callback function to be called upon error
 
 ### Example
 
 ```javascript     
 window.hybridmessaging.startMessagingService(function() {
     console.log('Messaging service has started successfully');
-}, function() {
-    console.log('Failed to start messaging service');
+}, function(error) {
+    console.log('Failed to start messaging service: ' + error);
 });
 ```
 
 
-## <a name="requestVerification"></a>requestVerification(msisdn, successCallback) 
+## <a name="requestVerification"></a>requestVerification(msisdn, successCallback, errorCallback) 
 
 Requests the phone number verification. Returns current [DeviceRegistrationStatus](#DeviceRegistrationStatus) in successful callback 
 
@@ -150,7 +161,9 @@ Requests the phone number verification. Returns current [DeviceRegistrationStatu
 
 * msisdn: `string`, (required) - phone number to verify
 
-* successCallback: `function`, (optional) - callback function to be called on verification result
+* successCallback: `function`, (required) - callback function to be called upon successfully requesting number verification
+
+* failureCallback: `function`, (optional) - callback function to be called upon error
 
 ### Example
 
@@ -158,6 +171,8 @@ Requests the phone number verification. Returns current [DeviceRegistrationStatu
 var msisdn = '+31612345678';
 window.hybridmessaging.requestVerification(msisdn, function(status) {
     console.log(status);
+}, function(error) {
+     console.log('Phone number verification failed: ' + error);
 });
 ```
 
@@ -170,9 +185,9 @@ Requests the phone number verification via voice call
 
 * msisdn: `string`, (required) - phone number to verify
 
-* successCallback: `function`, (optional) - callback on voice call success
+* successCallback: `function`, (required) - callback function to be called upon successfully requesting PIN voice call
 
-* errorCallback: `function`, (optional) - callback on voice call error
+* errorCallback: `function`, (optional) - callback function to be called upon error
 
 ### Example
 
@@ -180,13 +195,13 @@ Requests the phone number verification via voice call
 var msisdn = '+31612345678';
 window.hybridmessaging.requestVerificationVoiceCall(msisdn, function() {
   console.log('Successfully performed a voice call');
-}, function() {
-  console.log('Failed to perform a voice call');
+}, function(error) {
+  console.log('Failed to perform a voice call: ' + error);
 });
 ```
 
 
-## <a name="verifyPin"></a>verifyPin(pin, successCallback) 
+## <a name="verifyPin"></a>verifyPin(pin, successCallback, errorCallback) 
 
 Requests pin verification. Returns current [DeviceRegistrationStatus](#DeviceRegistrationStatus) in successful callback
 
@@ -194,7 +209,9 @@ Requests pin verification. Returns current [DeviceRegistrationStatus](#DeviceReg
 
 * pin: `string`, (required) - pin to verify
 
-* successCallback: `function`, (optional) - callback function to be called on verification result
+* successCallback: `function`, (required) - callback function to be called upon successfully executing PIN verification (with verification either passed or failed, but in any case correctly executed)
+
+* errorCallback: `function`, (optional) - callback function to be called upon error
 
 ### Example
 
@@ -202,23 +219,29 @@ Requests pin verification. Returns current [DeviceRegistrationStatus](#DeviceReg
 var pin = '0785';
 window.hybridmessaging.verifyPin(pin, function(status) {
     console.log(status);
+}, function(error) {
+   console.log('Failed to verify pin: ' + error);
 });
 ```
 
 
-## <a name="getVerificationStatus"></a>getVerificationStatus(successCallback) 
+## <a name="getVerificationStatus"></a>getVerificationStatus(successCallback, errorCallback) 
 
 Requests current verification status. Returns current [DeviceRegistrationStatus](#DeviceRegistrationStatus) in successful callback
 
 ### Parameters
 
-* successCallback: `function`, (optional) - callback function to be called on verification result
+* successCallback: `function`, (required) - callback function to be called upon successfully fetching the current status
+
+* errorCallback: `function`, (optional) - callback function to be called upon error
 
 ### Example
 
 ```javascript 
 window.hybridmessaging.getVerificationStatus(function(status) {
     console.log(status);
+}, function(error) {
+    console.log('Failed to get verification status: ' + error);
 });
 ```
 
@@ -233,9 +256,9 @@ Returns messages that have been sent by Hybrid Messaging
 
 * offset: `number`, (optional) - offset from which messages to retrieve
 
-* successCallback: `function`, (optional) - callback to be called on successful message retrieval
+* successCallback: `function`, (required) - callback to be called upon successful message retrieval
 
-* errorCallback: `function`, (optional) - callback to be called on message retrieval error
+* errorCallback: `function`, (optional) - callback function to be called upon error
 
 ### Example
 
@@ -244,8 +267,8 @@ var limit = 5;
 var offset = 10;
 window.hybridmessaging.getMessages(limit, offset, function(messages) {
     console.log(messages);
-}, function(errorString) {
-    console.log('Failed to retrieve messages');
+}, function(error) {
+    console.log('Failed to retrieve messages: ' + error);
 });
 ```
 
