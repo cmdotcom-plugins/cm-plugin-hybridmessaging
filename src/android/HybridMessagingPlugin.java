@@ -119,6 +119,7 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 
 				@Override
 				public void onError(Throwable throwable) {
+					Log.e(TAG, "PIN verification call returned with an error: " + throwable.getMessage());
 					cc.error("PIN verification call returned with an error: " + throwable.getMessage());
 				}
 			});
@@ -141,10 +142,10 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 		} else if (action.equals("getMessages")) {
 			int limit = args.optInt(0, 0);
 			int offset = args.optInt(1, 0);
-			Filter filter = null;
+			Filter filter = new Filter();
+			filter.addFilter(Filter.OPTION_SELECT, "ID,Body,DateTime,Sender,UpdateIDs");
+			filter.addFilter(Filter.OPTION_ORDER_BY, "DateTime desc");
 			if (limit > 0 || offset > 0) {
-				filter = new Filter();
-				filter.addFilter(Filter.OPTION_SELECT, "ID,Body,DateTime,Sender,UpdateIDs");
 				if (offset > 0) {
 					filter.addFilter(Filter.OPTION_SKIP, String.valueOf(offset));
 				}
