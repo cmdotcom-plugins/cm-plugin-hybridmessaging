@@ -125,6 +125,7 @@ function deviceCarrierUpdateCallback() {
 var options = {
     appKey : YOUR_APP_KEY,
     appSecret : YOUR_APP_SECRET,
+    senderId : YOUR_ANDROID_SENDER_ID,
     notificationCallback: notificationCallback,
     deviceCarrierUpdateCallback: deviceCarrierUpdateCallback
 };
