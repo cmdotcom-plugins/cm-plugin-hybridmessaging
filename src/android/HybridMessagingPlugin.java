@@ -230,7 +230,6 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 
 	private void handleNotificationPayload(Bundle notificationPayload) {
 		JSONObject notificationJson = new JSONObject();
-		notificationPayload.putString("alert", notificationPayload.getString("message"));
 		try {
 			Set<String> keys = notificationPayload.keySet();
 			for (String key : keys) {

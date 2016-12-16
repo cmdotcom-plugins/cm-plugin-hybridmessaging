@@ -105,7 +105,7 @@ Configures service with key, secret and callbacks
 {
     appKey : 'string',
     appSecret : 'string',
-    senderId : 'string', (Android only)
+    senderId : 'string', (required on Android only)
     notificationCallback : 'function', 
     deviceCarrierUpdateCallback : 'function'
 }
@@ -114,15 +114,21 @@ Configures service with key, secret and callbacks
 ### Example
     
 ```javascript    
-function notificationCallback(alertMessage) {
-    console.log(alertMessage);
+
+function notificationCallback(pushPayload) {
+    console.log(pushPayload);
+
+    #push payload is raw platform-specific payload including keys such as 'alert' on iOS and 'message' on Android.
+    var message = pushPayload.alert ? pushPayload.alert : pushPayload.message;
+
+    $cordovaDialogs.alert(message, 'Push message', 'OK');
 }
 
 function deviceCarrierUpdateCallback() {
     console.log('Device carrier has changed');
 }
 
-var options = {
+var config = {
     appKey : YOUR_APP_KEY,
     appSecret : YOUR_APP_SECRET,
     senderId : YOUR_ANDROID_SENDER_ID,
