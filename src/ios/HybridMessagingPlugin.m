@@ -9,16 +9,35 @@
 #import "HybridMessagingPlugin.h"
 #import "HybridMessaging.h"
 
+@interface HybridMessagingPlugin() {
+    BOOL isServiceConfigured;
+    BOOL isServiceStarted;
+}
+
+@end
+
 @implementation HybridMessagingPlugin
 
 #pragma mark - HybridMessaging getters
 
 - (void)getDeviceIdValue:(CDVInvokedUrlCommand*)command {
+    if (isServiceStarted != YES) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Hybrid messaging system not initialized. Call 'startMessagingService' first."] callbackId:command.callbackId];
+
+        return;
+    }
+
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[HybridMessaging deviceId]];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)getMsisdnValue:(CDVInvokedUrlCommand*)command {
+    if (isServiceStarted != YES) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Hybrid messaging system not initialized. Call 'startMessagingService' first."] callbackId:command.callbackId];
+
+        return;
+    }
+
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[HybridMessaging msisdn]];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
@@ -36,6 +55,7 @@
     id appSecret = [command argumentAtIndex:1];
 
     [HybridMessaging configureWithKey:appKey secret:appSecret];
+    isServiceConfigured = YES;
 
     [HybridMessaging setDidReceiveRemoteNotificationBlock:^(NSDictionary *userInfo) {
         NSLog(@"User info %@", userInfo);
@@ -53,14 +73,23 @@
 }
 
 - (void)startMessagingService:(CDVInvokedUrlCommand*)command {
+    if (isServiceConfigured != YES) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Incomplete configuration. Call 'configureService' with a complete configuration object as argument"] callbackId:command.callbackId];
+
+        return;
+    }
+
+    isServiceStarted = NO;
     [HybridMessaging setDidRegisterForRemoteNotificationsWithDeviceTokenBlock:^(NSData *deviceToken) {
         NSLog(@"%@", [deviceToken description]);
-        [self callJavaScriptFunction:@"hybridmessaging.pushRegistrationSuccessCallback();"];
+        isServiceStarted = YES;
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];
     }];
 
     [HybridMessaging setDidFailToRegisterForRemoteNotificationsWithErrorBlock:^(NSError *error) {
+        isServiceStarted = NO;
         NSLog(@"%@", error);
-        [self callJavaScriptFunction:@"hybridmessaging.pushRegistrationErrorCallback();"];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]] callbackId:command.callbackId];
     }];
 
     [HybridMessaging enable];
@@ -69,6 +98,12 @@
 #pragma mark - HybridMessaging functions - verification functions
 
 - (void)requestVerification:(CDVInvokedUrlCommand*)command {
+    if (isServiceStarted != YES) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Hybrid messaging system not initialized. Call 'startMessagingService' first."] callbackId:command.callbackId];
+
+        return;
+    }
+
     NSString *msisdn = [command argumentAtIndex:0];
     [HybridMessaging requestPhoneVerification:msisdn handler:^(HMDeviceRegistrationStatus status) {
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:[HybridMessagingPlugin numberFromRegistrationStatus:status]];
@@ -77,19 +112,31 @@
 }
 
 - (void)requestVerificationVoiceCall:(CDVInvokedUrlCommand*)command {
+    if (isServiceStarted != YES) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Hybrid messaging system not initialized. Call 'startMessagingService' first."] callbackId:command.callbackId];
+
+        return;
+    }
+
     NSString *msisdn = [command argumentAtIndex:0];
     [HybridMessaging requestPhoneVerificationVoiceCall:msisdn handler:^(BOOL success) {
         CDVPluginResult* pluginResult = nil;
         if (success) {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         } else {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Failed to perform a voice call"];
         }
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
 
 - (void)verifyPin:(CDVInvokedUrlCommand*)command {
+    if (isServiceStarted != YES) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Hybrid messaging system not initialized. Call 'startMessagingService' first."] callbackId:command.callbackId];
+
+        return;
+    }
+
     NSString *pin = [command argumentAtIndex:0];
 
     [HybridMessaging requestPinVerification:pin handler:^(HMDeviceRegistrationStatus status) {
@@ -99,6 +146,12 @@
 }
 
 - (void)getVerificationStatus:(CDVInvokedUrlCommand*)command {
+    if (isServiceStarted != YES) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Hybrid messaging system not initialized. Call 'startMessagingService' first."] callbackId:command.callbackId];
+
+        return;
+    }
+
     [HybridMessaging requestVerificationStatus:^(HMDeviceRegistrationStatus status) {
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:[HybridMessagingPlugin numberFromRegistrationStatus:status]];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -107,6 +160,12 @@
 
 #pragma mark - HybridMessaging functions - messages functions
 - (void)getMessages:(CDVInvokedUrlCommand*)command {
+    if (isServiceStarted != YES) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Hybrid messaging system not initialized. Call 'startMessagingService' first."] callbackId:command.callbackId];
+
+        return;
+    }
+
     NSNumber *limit = [command argumentAtIndex:0];
     NSNumber *offset = [command argumentAtIndex:1];
 
