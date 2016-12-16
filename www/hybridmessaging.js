@@ -67,7 +67,7 @@ var hybridmessaging = {
         argscheck.checkArgs('o', hybridmessaging.pluginName + '.' + methodName, arguments);
 
         var parameters = [config.appKey, config.appSecret, config.senderId];
-        for (var i = 0; i <= 2; i++) {
+        for (var i = 0; i <= 1; i++) {
             if (typeof parameters[i] !== "string" || parameters[i] === ""){
                 throw new Error("certa.push.configureService failure: config arguments missing or TypeError - {appKey : 'string', appSecret : 'string', senderId : 'string', notificationCallback : 'function', deviceCarrierUpdateCallback : 'function'}");
             }
