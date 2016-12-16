@@ -31,6 +31,7 @@ import com.cm.hybridmessagingsdk.listener.OnVerificationStatus;
 import com.cm.hybridmessagingsdk.listener.VoiceCallListener;
 import com.cm.hybridmessagingsdk.listener.ResponseListener;
 import com.cm.hybridmessagingsdk.listener.HybridNotificationListener;
+import com.cm.hybridmessagingsdk.listener.OnSimcardChangedListener;
 import com.cm.hybridmessagingsdk.util.Registration;
 import com.cm.hybridmessagingsdk.util.VerificationStatus;
 import com.cm.hybridmessagingsdk.util.Message;
@@ -39,7 +40,7 @@ import com.cm.hybridmessagingsdk.util.NotificationUtil;
 import com.cm.hybridmessagingsdk.webservice.MessageRestClient;
 import com.cm.hybridmessagingsdk.webservice.Filter;
 
-public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotificationListener {
+public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotificationListener, OnSimcardChangedListener {
 
 	private final static String TAG = HybridMessagingPlugin.class.getSimpleName();
 	private String apiKey;
@@ -52,7 +53,6 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 	}
 
 	public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
-		Log.d(TAG, "Action: " + action + args.toString());
 		final CallbackContext cc = callbackContext;
 		if (action.equals("setDevelopment")) {
 		} else if (action.equals("configureService")) {
@@ -119,7 +119,6 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 
 				@Override
 				public void onError(Throwable throwable) {
-					Log.e(TAG, "PIN verification call returned with an error: " + throwable.getMessage());
 					cc.error("PIN verification call returned with an error: " + throwable.getMessage());
 				}
 			});
@@ -266,7 +265,6 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 
 		jsString = jsString+")";
 
-		Log.d(TAG, "sendJavascript : " + jsString);
                 this.webView.sendJavascript(jsString);
 	}
 
@@ -278,5 +276,12 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 			case Verified : return 4;
 			default : return 6; // status UNKNOWN 
         	}
+	}
+
+	@Override
+	public void onSimcardChanged(boolean isChanged, String simState) {
+		if (isChanged) {
+			notifyJavascript("deviceCarrierUpdateCallback");
+		}
 	}
 }
