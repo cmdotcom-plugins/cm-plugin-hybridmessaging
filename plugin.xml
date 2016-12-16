@@ -37,4 +37,18 @@
 
     </platform>
 
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="HybridMessaging" >
+                <param name="android-package" value="com.cm.hybridmessagingplugin.HybridMessagingPlugin"/>
+            </feature>
+        </config-file>
+
+        <resource-file src="src/android/libs/HybridMessagingSDK-release.aar" target="libs/hybridmessaging.aar" />
+	<framework src="src/android/hybridmessaging.gradle" custom="true" type="gradleReference" />
+        <source-file src="src/android/HybridMessagingPlugin.java" target-dir="src" />
+        <source-file src="src/android/HybridMessagingApplication.java" target-dir="src" />
+        <hook type="after_prepare" src="hooks/add_application_name.js" />
+    </platform>
 </plugin>
