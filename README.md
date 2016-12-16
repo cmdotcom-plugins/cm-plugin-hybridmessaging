@@ -169,7 +169,7 @@ Requests the phone number verification. Returns current [DeviceRegistrationStatu
 ### Example
 
 ```javascript     
-var msisdn = '+31612345678';
+var msisdn = '0031612345678';
 window.hybridmessaging.requestVerification(msisdn, function(status) {
     console.log(status);
 }, function(error) {
@@ -193,7 +193,7 @@ Requests the phone number verification via voice call
 ### Example
 
 ```javascript 
-var msisdn = '+31612345678';
+var msisdn = '0031612345678';
 window.hybridmessaging.requestVerificationVoiceCall(msisdn, function() {
   console.log('Successfully performed a voice call');
 }, function(error) {
