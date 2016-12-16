@@ -22,27 +22,27 @@ var hybridmessaging = {
     // This function can be called from the native implementation
     notificationCallback: function() {},
     deviceCarrierUpdateCallback: function() {},
-    pushRegistrationSuccessCallback: function() {},
-    pushRegistrationErrorCallback: function() {},
 
     /**
      * Returns a device ID value
-     * @param {function} successCallback (optional) - callback function to be called with a result
+     * @param {function} successCallback (optional) - callback function to be called upon successfully fetching device ID
+     * @param {function} failureCallback (optional) - callback function to be called upon error
      */
-    getDeviceIdValue: function(successCallback) {
+    getDeviceIdValue: function(successCallback, failureCallback) {
         var methodName = 'getDeviceIdValue';
-        argscheck.checkArgs('F', hybridmessaging.pluginName + '.' + methodName, arguments);
+        argscheck.checkArgs('FF', hybridmessaging.pluginName + '.' + methodName, arguments);
 
-        exec(successCallback, null, hybridmessaging.pluginName, methodName, []);
+        exec(successCallback, failureCallback, hybridmessaging.pluginName, methodName, []);
     },
 
     /**
      * Returns a msisdn value
-     * @param {function} successCallback (optional) - callback function to be called with a result
+     * @param {function} successCallback (optional) - callback function to be called upon successfully fetching MSISDN
+     * @param {function} failureCallback (optional) - callback function to be called upon error
      */
-    getMsisdnValue: function(successCallback) {
+    getMsisdnValue: function(successCallback, failureCallback) {
         var methodName = 'getMsisdnValue';
-        argscheck.checkArgs('F', hybridmessaging.pluginName + '.' + methodName, arguments);
+        argscheck.checkArgs('FF', hybridmessaging.pluginName + '.' + methodName, arguments);
 
         exec(successCallback, null, hybridmessaging.pluginName, methodName, []);
     },
@@ -62,14 +62,14 @@ var hybridmessaging = {
      * Configures service with key, secret and callbacks
      * @param {Object} options (required) - config object with format {appKey : 'string', appSecret : 'string', notificationCallback : 'function', deviceCarrierUpdateCallback : 'function'}
      */
-    configureService: function(options) {
+    configureService: function(config) {
         var methodName = 'configureService';
         argscheck.checkArgs('o', hybridmessaging.pluginName + '.' + methodName, arguments);
 
-        var parameters = [options.appKey, options.appSecret];
-        for (var i = 0; i <= 1; i++) {
+        var parameters = [options.appKey, options.appSecret, options.senderId];
+        for (var i = 0; i <= 2; i++) {
             if (typeof parameters[i] !== "string" || parameters[i] === ""){
-                throw new Error("certa.push.configureService failure: options arguments missing or TypeError - {appKey : 'string', appSecret : 'string', notificationCallback : 'function', deviceCarrierUpdateCallback : 'function'}");
+                throw new Error("certa.push.configureService failure: options arguments missing or TypeError - {appKey : 'string', appSecret : 'string', senderId : 'string', notificationCallback : 'function', deviceCarrierUpdateCallback : 'function'}");
             }
         }
 
@@ -86,13 +86,13 @@ var hybridmessaging = {
         this.notificationCallback = function (userInfo) { notificationCallback(userInfo); };
         this.deviceCarrierUpdateCallback = function () { deviceCarrierUpdateCallback(); };
 
-        exec(null, null, hybridmessaging.pluginName, methodName, parameters);
+        exec(null, null, hybridmessaging.pluginName, methodName, [options]);
     },
 
     /**
      * Sets callbacks for push registration and enables messaging service
-     * @param {function} successCallback (optional) - success push registration callback
-     * @param {function} failureCallback (optional) - error push registration callback
+     * @param {function} successCallback (optional) - callback function to be called upon successfully started messaging service
+     * @param {function} failureCallback (optional) - callback function to be called upon error
      */
     startMessagingService: function(successCallback, failureCallback) {
         var methodName = 'startMessagingService';
@@ -105,66 +105,66 @@ var hybridmessaging = {
             failureCallback = function() {};
         }
 
-        this.pushRegistrationSuccessCallback = function () { successCallback(); };
-        this.pushRegistrationErrorCallback = function () { failureCallback(); };
-
-        exec(null, null, hybridmessaging.pluginName, methodName, []);
+        exec(successCallback, failureCallback, hybridmessaging.pluginName, methodName, []);
     },
 
     /**
      * Requests the phone number verification
      * @param {string} msisdn (required) - phone number to verify
-     * @param {function} successCallback (optional) - callback function to be called on verification result
+     * @param {function} successCallback (optional) - callback function to be called upon successfully requesting number verification
+     * @param {function} failureCallback (optional) - callback function to be called upon error
      */
-    requestVerification: function(msisdn, successCallback) {
+    requestVerification: function(msisdn, successCallback, failureCallback) {
         var methodName = 'requestVerification';
-        argscheck.checkArgs('sF', hybridmessaging.pluginName + '.' + methodName, arguments);
+        argscheck.checkArgs('sFF', hybridmessaging.pluginName + '.' + methodName, arguments);
 
-        exec(successCallback, null, hybridmessaging.pluginName, methodName, [msisdn]);
+        exec(successCallback, failureCallback, hybridmessaging.pluginName, methodName, [msisdn]);
     },
 
     /**
      * Requests the phone number verification via voice call
      * @param {string} msisdn (required) - phone number to verify
-     * @param {function} successCallback (optional) - callback on voice call success
-     * @param {function} errorCallback (optional) - callback on voice call error
+     * @param {function} successCallback (optional) - callback function to be called upon successfully requesting PIN voice call
+     * @param {function} failureCallback (optional) - callback function to be called upon error
      */
-    requestVerificationVoiceCall: function(msisdn, successCallback, errorCallback) {
+    requestVerificationVoiceCall: function(msisdn, successCallback, failureCallback) {
         var methodName = 'requestVerificationVoiceCall';
         argscheck.checkArgs('sFF', hybridmessaging.pluginName + '.' + methodName, arguments);
 
-        exec(successCallback, errorCallback, hybridmessaging.pluginName, methodName, [msisdn]);
+        exec(successCallback, failureCallback, hybridmessaging.pluginName, methodName, [msisdn]);
     },
 
     /**
      * Requests pin verification
      * @param {string} pin (required) - pin to verify
-     * @param {function} successCallback (optional) - callback function to be called on verification result
+     * @param {function} successCallback (optional) - callback function to be called upon successfully executing PIN verification (with verification either passed or failed, but in any case correctly executed)
+     * @param {function} failureCallback (optional) - callback function to be called upon error
      */
-    verifyPin: function(pin, successCallback) {
+    verifyPin: function(pin, successCallback, failureCallback) {
         var methodName = 'verifyPin';
-        argscheck.checkArgs('sF', hybridmessaging.pluginName + '.' + methodName, arguments);
+        argscheck.checkArgs('sFF', hybridmessaging.pluginName + '.' + methodName, arguments);
 
-        exec(successCallback, null, hybridmessaging.pluginName, methodName, [pin]);
+        exec(successCallback, faiureCallback, hybridmessaging.pluginName, methodName, [pin]);
     },
 
     /**
      * Requests current verification status
-     * @param {function} successCallback (optional) - callback function to be called on verification result
+     * @param {function} successCallback (optional) - callback function to be called upon successfully fetching the current status
+     * @param {function} failureCallback (optional) - callback function to be called upon error
      */
-    getVerificationStatus: function(successCallback) {
+    getVerificationStatus: function(successCallbacki, failureCallback) {
         var methodName = 'getVerificationStatus';
-        argscheck.checkArgs('F', hybridmessaging.pluginName + '.' + methodName, arguments);
+        argscheck.checkArgs('FF', hybridmessaging.pluginName + '.' + methodName, arguments);
 
-        exec(successCallback, null, hybridmessaging.pluginName, methodName, []);
+        exec(successCallback, failureCallback, hybridmessaging.pluginName, methodName, []);
     },
 
     /**
      * Returns messages that have been sent by Hybrid Messaging
      * @param {number} limit (optional) - amount of messages to retrieve
      * @param {number} offset (optional) - offset from which messages to retrieve
-     * @param {function} successCallback (optional) - callback to be called on successful message retrieval
-     * @param {function} errorCallback (optional) - callback to be called on message retrieval error
+     * @param {function} successCallback (optional) - callback to be called upon successful message retrieval
+     * @param {function} errorCallback (optional) - callback to be called upon error
      */
     getMessages: function(limit, offset, successCallback, errorCallback) {
         var methodName = 'getMessages';
