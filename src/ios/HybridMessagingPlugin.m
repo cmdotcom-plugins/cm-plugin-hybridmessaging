@@ -51,8 +51,9 @@
 }
 
 - (void)configureService:(CDVInvokedUrlCommand*)command {
-    id appKey = [command argumentAtIndex:0];
-    id appSecret = [command argumentAtIndex:1];
+    NSDictionary *config = [command argumentAtIndex:0];
+    NSString *appKey = config[@"appKey"];
+    NSString *appSecret = config[@"appSecret"];
 
     [HybridMessaging configureWithKey:appKey secret:appSecret];
     isServiceConfigured = YES;
