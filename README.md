@@ -155,7 +155,7 @@ window.hybridmessaging.verifyPin(pin, function(status) {
 
 ## <a name="requestVerificationVoiceCall"></a>requestVerificationVoiceCall(msisdn, successCallback, errorCallback)
 
-Requests the phone number verification via voice call. Typically serves as a fallback in case if the default SMS-based number verification failed e.g. due to network issues. The requested voice call, if successful, will provide the same PIN code as was originally send via SMS.
+Requests the phone number verification via voice call. Typically serves as a fallback in case if the default SMS-based number verification failed e.g. due to network issues. The requested voice call, if successful, will provide the same PIN code as was originally sent via SMS.
 
 ### Parameters
 
@@ -226,7 +226,7 @@ window.hybridmessaging.getMessages(limit, offset, function(messages) {
 
 ## <a name="getDeviceIdValue"></a>getDeviceIdValue(successCallback, errorCallback)
 
-Returns a device ID value
+Returns a device ID value as used by the Hybrid Messaging system for device identification
 
 ### Parameters
 
