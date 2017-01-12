@@ -1,7 +1,6 @@
 package com.cm.hybridmessagingplugin;
 
-import com.cm.hybridmessagingplugin.HybridMessagingApplication;
-
+import com.cm.hybridmessagingplugin.HybridNotificationManager;
 import android.util.Log;
 
 import org.apache.cordova.CordovaPlugin;
@@ -20,7 +19,6 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Set;
 
 import okhttp3.Headers;
@@ -65,8 +63,9 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 		} else if (action.equals("startMessagingService")) {
 			Context applicationContext = cordova.getActivity().getApplicationContext();
                         HybridMessaging.initialize(applicationContext, apiKey, apiSecret, senderId);
-			HybridMessaging.fireNotificationsByDefault(false);
-			HybridMessaging.setHybridNotificationListener(this);
+			if (HybridNotificationManager.isInitialized() == false) {
+				HybridNotificationManager.init();
+			}
 			sdkInitialized = true;
 			onResume(true);
 			cc.success();
@@ -187,7 +186,8 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 		if (sdkInitialized == true) {
 			HybridMessaging.onPause();
 		}
-		setBackgroundNotificationListener();
+
+		HybridNotificationManager.enableBackgroundModeListener();
 	}
 
 	@Override
@@ -196,7 +196,7 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 			HybridMessaging.onResume();
 		}
 
-		HybridMessaging.setHybridNotificationListener(this);
+		HybridNotificationManager.enableForegroundModeListener(this);
 
 		Bundle extras = cordova.getActivity().getIntent().getExtras();
 		if (extras != null) {
@@ -210,17 +210,12 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 
 	@Override
 	public void onDestroy() {
-		setBackgroundNotificationListener();
+		HybridNotificationManager.enableBackgroundModeListener();
 	}
 
 	@Override
 	public void onNewIntent(Intent intent) {
 		cordova.getActivity().setIntent(intent);
-	}
-
-	private void setBackgroundNotificationListener() {
-		HybridMessagingApplication application = (HybridMessagingApplication)cordova.getActivity().getApplication();
-		HybridMessaging.setHybridNotificationListener(application);
 	}
 
 	@Override
