@@ -4,7 +4,7 @@
 
 This plugin provides [Hybrid Messaging SDK](https://docs.cmtelecom.com/hybrid-messaging/v2.0.0) functionality for cordova based apps.
 
-Latest version is **0.0.1**
+Latest version is **0.0.2**
 
 [Changelog](#changelog)
 
