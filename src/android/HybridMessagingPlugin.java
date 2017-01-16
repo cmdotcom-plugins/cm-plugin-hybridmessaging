@@ -209,7 +209,6 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 	@Override
 	public void onDestroy() {
 		if (sdkInitialized == true) {
-			HybridMessaging.onPause();
 			HybridNotificationManager.enableBackgroundModeListener();
 		}
 	}
