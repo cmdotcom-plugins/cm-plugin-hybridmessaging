@@ -4,7 +4,7 @@
 
 This plugin provides [Hybrid Messaging SDK](https://docs.cmtelecom.com/hybrid-messaging/v2.0.0) functionality for cordova based apps.
 
-Latest version is **0.0.2**
+Latest version is **0.0.3**
 
 [Changelog](#changelog)
 
@@ -302,4 +302,7 @@ DeviceRegistrationStatus.UNKNOWN
 ### 0.0.2
 * Modified Android part of plugin to no longer rely on a custom Application class to prevent conflicts with environments which define their own Application subclasses
 * Restructured docs and extended method descriptions
+
+### 0.0.3
+* Fixed onPause and OnResume crashes on Android in case if lifecycle methods were called after hybrid messaging configuration but before service start
 

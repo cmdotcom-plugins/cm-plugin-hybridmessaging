@@ -185,18 +185,16 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 	public void onPause(boolean multitasking) {
 		if (sdkInitialized == true) {
 			HybridMessaging.onPause();
+			HybridNotificationManager.enableBackgroundModeListener();
 		}
-
-		HybridNotificationManager.enableBackgroundModeListener();
 	}
 
 	@Override
 	public void onResume(boolean multitasking) {
                 if (sdkInitialized == true) {
 			HybridMessaging.onResume();
+			HybridNotificationManager.enableForegroundModeListener(this);
 		}
-
-		HybridNotificationManager.enableForegroundModeListener(this);
 
 		Bundle extras = cordova.getActivity().getIntent().getExtras();
 		if (extras != null) {
@@ -210,7 +208,10 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 
 	@Override
 	public void onDestroy() {
-		HybridNotificationManager.enableBackgroundModeListener();
+		if (sdkInitialized == true) {
+			HybridMessaging.onPause();
+			HybridNotificationManager.enableBackgroundModeListener();
+		}
 	}
 
 	@Override
