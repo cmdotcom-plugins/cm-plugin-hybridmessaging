@@ -21,8 +21,7 @@ public class NotificationListenerStarterBroadcastReceiver extends BroadcastRecei
 
         if (HybridNotificationManager.isInitialized() == false) {
             HybridNotificationManager.init();
+            HybridNotificationManager.enableBackgroundModeListener();
         }
-
-        HybridNotificationManager.enableBackgroundModeListener();
     }
 }
