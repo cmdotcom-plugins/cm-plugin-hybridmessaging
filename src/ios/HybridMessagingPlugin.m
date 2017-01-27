@@ -38,8 +38,13 @@
         return;
     }
 
-    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[HybridMessaging msisdn]];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    NSString *msisdn = [HybridMessaging msisdn];
+
+    if (msisdn != nil) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:msisdn] callbackId:command.callbackId];
+    } else {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Cannot determine MSISDN number. Call 'requestVerification' with a valid MSISDN number first."] callbackId:command.callbackId];
+    }   
 }
 
 #pragma mark - HybridMessaging functions
@@ -119,16 +124,21 @@
         return;
     }
 
-    NSString *msisdn = [command argumentAtIndex:0];
-    [HybridMessaging requestPhoneVerificationVoiceCall:msisdn handler:^(BOOL success) {
-        CDVPluginResult* pluginResult = nil;
-        if (success) {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        } else {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Failed to perform a voice call"];
-        }
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    NSString *msisdn = [HybridMessaging msisdn];
+
+    if (msisdn != nil) {
+        [HybridMessaging requestPhoneVerificationVoiceCall:msisdn handler:^(BOOL success) {
+           CDVPluginResult* pluginResult = nil;
+           if (success) {
+               pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+           } else {
+               pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Failed to perform a voice call"];
+           }
+           [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }];
+    } else {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Cannot determine MSISDN number to issue a voice call. Call 'requestVerification' with a valid MSISDN number first."] callbackId:command.callbackId];
+    }
 }
 
 - (void)verifyPin:(CDVInvokedUrlCommand*)command {

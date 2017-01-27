@@ -120,11 +120,11 @@ var hybridmessaging = {
      * @param {function} successCallback (required) - callback function to be called upon successfully requesting PIN voice call
      * @param {function} errorCallback (optional) - callback function to be called upon error
      */
-    requestVerificationVoiceCall: function(msisdn, successCallback, errorCallback) {
+    requestVerificationVoiceCall: function(successCallback, errorCallback) {
         var methodName = 'requestVerificationVoiceCall';
-        argscheck.checkArgs('sfF', hybridmessaging.pluginName + '.' + methodName, arguments);
+        argscheck.checkArgs('fF', hybridmessaging.pluginName + '.' + methodName, arguments);
 
-        exec(successCallback, errorCallback, hybridmessaging.pluginName, methodName, [msisdn]);
+        exec(successCallback, errorCallback, hybridmessaging.pluginName, methodName, []);
     },
 
     /**

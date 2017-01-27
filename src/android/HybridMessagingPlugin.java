@@ -1,7 +1,6 @@
 package com.cm.hybridmessagingplugin;
 
 import com.cm.hybridmessagingplugin.HybridNotificationManager;
-import android.util.Log;
 
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
@@ -45,7 +44,6 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 	private String apiSecret;
 	private String senderId;
 	private boolean sdkInitialized = false;
-	private boolean numberVerified = false;
 
 	public HybridMessagingPlugin() {
 	}
@@ -89,11 +87,6 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 				@Override
 				public void onVerificationStatus(VerificationStatus status) {
 					cc.success(getVerificationStatusAsInt(status));
-					if (status == VerificationStatus.Verified) {
-						numberVerified = true;
-					} else {
-						numberVerified = false;
-					}
 				}
 
 				@Override
@@ -102,18 +95,19 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
                                 }
 			});
 		} else if (action.equals("getMsisdnValue")) {
-			cc.success(HybridMessaging.getMsisdn());
+			String msisdn = HybridMessaging.getMsisdn();
+			if (msisdn != null) {
+				cc.success(HybridMessaging.getMsisdn());
+			} else {
+				cc.error("Unable to determine MSISDN - call requestVerification to register the MSISDN with the hybrid messaging system");
+			}
 		} else if (action.equals("verifyPin")) {
+
 			String pin = args.getString(0);
 			HybridMessaging.registerUserByPincode(pin, new OnVerificationStatus() {
 				@Override
 				public void onVerificationStatus(VerificationStatus status) {
 					cc.success(getVerificationStatusAsInt(status));
-					if (status == VerificationStatus.Verified) {
-						numberVerified = true;
-					} else {
-						numberVerified = false;
-					}
 				}
 
 				@Override
@@ -124,8 +118,9 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 		} else if (action.equals("getDeviceIdValue")) {
 			cc.success(HybridMessaging.getDeviceId());
 		} else if (action.equals("requestVerificationVoiceCall")) {
-			if (numberVerified == true) {
-				HybridMessaging.doVoiceCall(HybridMessaging.getMsisdn(), new VoiceCallListener() {
+			String msisdn = HybridMessaging.getMsisdn();
+			if (msisdn != null) {
+				HybridMessaging.doVoiceCall(msisdn, new VoiceCallListener() {
 					@Override
 					public void onSuccess() {
 						cc.success();
@@ -136,7 +131,9 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 						cc.error("Voice call request returned with an error: " + throwable.getMessage());
 					}
 				});
-			}	
+			} else {
+				cc.error("Voice call request failed due to unknown MSISDN - call requestVerification to register the MSISDN with the hybrid messaging system");
+			}
 		} else if (action.equals("getMessages")) {
 			int limit = args.optInt(0, 0);
 			int offset = args.optInt(1, 0);

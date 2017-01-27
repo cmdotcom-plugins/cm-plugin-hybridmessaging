@@ -4,7 +4,7 @@
 
 This plugin provides [Hybrid Messaging SDK](https://docs.cmtelecom.com/hybrid-messaging/v2.0.0) functionality for cordova based apps.
 
-Latest version is **0.0.4**
+Latest version is **0.1.0**
 
 [Changelog](#changelog)
 
@@ -308,4 +308,9 @@ DeviceRegistrationStatus.UNKNOWN
 
 ### 0.0.4
 * Fixed foreground push behavior on Android after regression in 0.0.3
+
+### 0.1.0
+* Changed the requestVerificationVoiceCall method signature to not require MSISDN as input since it should be known to the SDK after initial verification request
+* Fixed bug on iOS where startMessagingService was unresponsive in case if user denied receiving notifications at first push registration
+* Changed the getMsisdnValue method behavior to return with failure in case if MSISDN was not available instead of returning with success and null value
 
