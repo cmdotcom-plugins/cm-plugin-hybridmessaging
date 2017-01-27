@@ -153,13 +153,13 @@ window.hybridmessaging.verifyPin(pin, function(status) {
 ```
 
 
-## <a name="requestVerificationVoiceCall"></a>requestVerificationVoiceCall(msisdn, successCallback, errorCallback)
+## <a name="requestVerificationVoiceCall"></a>requestVerificationVoiceCall(successCallback, errorCallback)
 
 Requests the phone number verification via voice call. Typically serves as a fallback in case if the default SMS-based number verification failed e.g. due to network issues. The requested voice call, if successful, will provide the same PIN code as was originally sent via SMS.
 
-### Parameters
+**IMPORTANT**: Due to its fallback nature the requestVerificationVoiceCall method should only be called after regular SMS-based verification has been requested using the requestVerification method. Calling requestVerificationVoiceCall before attempting at least one requestVerification call in the application's life cycle will result in an error.
 
-* msisdn: `string`, (required) - phone number to verify
+### Parameters
 
 * successCallback: `function`, (required) - callback function to be called upon successfully requesting PIN voice call
 
