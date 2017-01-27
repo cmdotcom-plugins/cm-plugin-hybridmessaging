@@ -168,8 +168,7 @@ Requests the phone number verification via voice call. Typically serves as a fal
 ### Example
 
 ```javascript 
-var msisdn = '0031612345678';
-window.hybridmessaging.requestVerificationVoiceCall(msisdn, function() {
+window.hybridmessaging.requestVerificationVoiceCall(function() {
   console.log('Successfully performed a voice call');
 }, function(error) {
   console.log('Failed to perform a voice call: ' + error);
