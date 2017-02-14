@@ -4,7 +4,7 @@
 
 This plugin provides [Hybrid Messaging SDK](https://docs.cmtelecom.com/hybrid-messaging/v2.0.0) functionality for cordova based apps.
 
-Latest version is **0.1.0**
+Latest version is **0.1.1**
 
 [Changelog](#changelog)
 
@@ -84,7 +84,7 @@ window.hybridmessaging.configureService(config);
 
 Enables the hybrid messaging service
 
-**IMPORTANT**: the startMessagingService method should be called after executing the configureService method and prior to executing any other call related to hybrid messaging. All hybrid messaging methods called prior to service starting (except for configureService which should be called before it and as early in the application life cycle as possible) will return with an error.
+**IMPORTANT**: the startMessagingService method should be called after executing the configureService method and should complete with success prior to executing any other call related to hybrid messaging. All hybrid messaging methods called prior to successful service starting (except for configureService which should be called before it and as early in the application life cycle as possible) will return with an error.
 
 ### Parameters
 
@@ -276,7 +276,7 @@ Sets development mode for iOS, which will use Development Sandbox for push messa
 ### Example
 
 ```javascript
-window.hybridmessaging.enableDevelopment(true);
+window.hybridmessaging.setDevelopment(true);
 ```
 
 
@@ -313,3 +313,5 @@ DeviceRegistrationStatus.UNKNOWN
 * Fixed bug on iOS where startMessagingService was unresponsive in case if user denied receiving notifications at first push registration
 * Changed the getMsisdnValue method behavior to return with failure in case if MSISDN was not available instead of returning with success and null value
 
+### 0.1.1
+* Fixed faulty argument type check for the setDevelopment function and corrected docs for setDevelopment and startMessagingService

@@ -17,63 +17,64 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 
 public class HybridNotificationManager implements HybridNotificationListener {
-    private static HybridNotificationManager instance;
-    private AtomicInteger notifIdGen;
+	private static HybridNotificationManager instance;
+	private AtomicInteger notifIdGen;
 
-    public static void init() {
-        if (instance == null) {
-            instance = new HybridNotificationManager();
-            HybridMessaging.fireNotificationsByDefault(false);
-        }
-    }
+	public static void init() {
+		if (instance == null) {
+			instance = new HybridNotificationManager();
+			HybridMessaging.fireNotificationsByDefault(false);
+		}
+	}
 
-    public static boolean isInitialized() {
-        return (instance != null);
-    }
+	public static boolean isInitialized() {
+		return (instance != null);
+	}
 
-    public static void enableForegroundModeListener(HybridNotificationListener externalListener) {
-        HybridMessaging.setHybridNotificationListener(externalListener);
-    }
+	public static void enableForegroundModeListener(HybridNotificationListener externalListener) {
+		HybridMessaging.setHybridNotificationListener(externalListener);
+	}
 
-    public static void enableBackgroundModeListener() {
-        HybridMessaging.setHybridNotificationListener(instance);
-    }
+	public static void enableBackgroundModeListener() {
+		HybridMessaging.setHybridNotificationListener(instance);
+	}
 
 
-    private HybridNotificationManager() {
-        notifIdGen = new AtomicInteger(0);
-    }
+	private HybridNotificationManager() {
+		notifIdGen = new AtomicInteger(0);
+	}
 
-    @Override
-    public void onReceiveHybridNotification(Context context, Notification notification) {
-        int notificationId = notifIdGen.incrementAndGet();
+	@Override
+	public void onReceiveHybridNotification(Context context, Notification notification) {
+		int notificationId = notifIdGen.incrementAndGet();
 
-        Context applicationContext = context.getApplicationContext();
+		Context applicationContext = context.getApplicationContext();
 
-        Intent notificationIntent = applicationContext.getPackageManager().getLaunchIntentForPackage(
-                applicationContext.getPackageName());
+		Intent notificationIntent = applicationContext.getPackageManager().getLaunchIntentForPackage(
+			applicationContext.getPackageName());
 
-        notificationIntent.putExtra("notificationPayload", notification.getExtras());
+		notificationIntent.putExtra("notificationPayload", notification.getExtras());
 
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(
-                applicationContext,
-                notificationId,
-                notificationIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-        );
+		PendingIntent resultPendingIntent = PendingIntent.getActivity(
+			applicationContext,
+			notificationId,
+			notificationIntent,
+			PendingIntent.FLAG_UPDATE_CURRENT
+		);
 
-        NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(context)
-                .setContentTitle(NotificationUtil.getInstance().getNotificationTitle())
-                .setSmallIcon(NotificationUtil.getInstance().getNotificationIcon())
-                .setContentIntent(resultPendingIntent)
-                .setContentText(notification.getMessage())
-                .setAutoCancel(true);
+		NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(context)
+			.setContentTitle(NotificationUtil.getInstance().getNotificationTitle())
+			.setSmallIcon(NotificationUtil.getInstance().getNotificationIcon())
+			.setContentIntent(resultPendingIntent)
+			.setContentText(notification.getMessage())
+			.setAutoCancel(true);
 
-        // gets an instance of the HybridNotificationManager service
-        android.app.NotificationManager notificationManager =
-                (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		// gets an instance of the HybridNotificationManager service
+		android.app.NotificationManager notificationManager =
+		(android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // show the notification
-        notificationManager.notify(notificationId, notifBuilder.build());
-    }
+		// show the notification
+		notificationManager.notify(notificationId, notifBuilder.build());
+	}
 }
+

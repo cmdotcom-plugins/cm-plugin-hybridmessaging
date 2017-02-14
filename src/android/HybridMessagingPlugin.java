@@ -61,9 +61,7 @@ public class HybridMessagingPlugin extends CordovaPlugin implements HybridNotifi
 		} else if (action.equals("startMessagingService")) {
 			Context applicationContext = cordova.getActivity().getApplicationContext();
                         HybridMessaging.initialize(applicationContext, apiKey, apiSecret, senderId);
-			if (HybridNotificationManager.isInitialized() == false) {
-				HybridNotificationManager.init();
-			}
+			HybridNotificationManager.init();
 			sdkInitialized = true;
 			onResume(true);
 			cc.success();

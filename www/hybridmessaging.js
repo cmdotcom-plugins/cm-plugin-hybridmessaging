@@ -53,7 +53,10 @@ var hybridmessaging = {
      */
     setDevelopment: function(enableDevelopment) {
         var methodName = 'setDevelopment';
-        argscheck.checkArgs('b', hybridmessaging.pluginName + '.' + methodName, arguments);
+
+        if (typeof enableDevelopment !== 'boolean') {
+            throw new TypeError('Wrong type for parameter "enableDevelopment" of ' +  hybridmessaging.pluginName + '.' + methodName + ': Expected boolean, but got ' + (typeof enableDevelopment) + '.');
+        }
 
         exec(null, null, hybridmessaging.pluginName, methodName, [enableDevelopment]);
     },
@@ -116,7 +119,6 @@ var hybridmessaging = {
 
     /**
      * Requests the phone number verification via voice call
-     * @param {string} msisdn (required) - phone number to verify
      * @param {function} successCallback (required) - callback function to be called upon successfully requesting PIN voice call
      * @param {function} errorCallback (optional) - callback function to be called upon error
      */
