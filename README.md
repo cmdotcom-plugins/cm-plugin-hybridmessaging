@@ -4,10 +4,13 @@
 
 This plugin provides [Hybrid Messaging SDK](https://docs.cmtelecom.com/hybrid-messaging/v2.0.0) functionality for cordova based apps.
 
-Latest version is **0.1.1**
+Latest version is **1.0.0**
 
 [Changelog](#changelog)
 
+## Installation
+
+* cordova plugin add https://github.com/CMTelecom/cm-plugin-hybridmessaging.git#1.0.0
 
 ## Supported Platforms
 
@@ -314,4 +317,7 @@ DeviceRegistrationStatus.UNKNOWN
 * Changed the getMsisdnValue method behavior to return with failure in case if MSISDN was not available instead of returning with success and null value
 
 ### 0.1.1
-* Fixed faulty argument type check for the setDevelopment function and corrected docs for setDevelopment and startMessagingService
+* Fixed faulty argument type check for the setDevelopment function and corrected docs for setDevelopment and startMessagingService.
+
+### 1.0.0
+* Public release of the plugin.
